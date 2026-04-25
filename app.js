@@ -64,15 +64,58 @@ async function fetchWeather(city) {
 	      	<p>Humidity: ${weatherData.hourly.relativehumidity_2m[0]}%</p>
 	      	<p>Wind: ${current.windspeed} km/h</p>
 	      	<p>Time: ${current.time}</p>
-	      	`;
+	      	`; 
 
-	    //skip step 7
+	    const daily = weatherData.daily;
+    	forecastGrid.innerHTML = "";
+    		daily.time.forEach((day, i) => {
+      		forecastGrid.innerHTML += `
+        		<div class="forecast-card">
+          		<p>${new Date(day).toLocaleDateString("en-US", { weekday: "short" })}</p>
+          		<p>${weatherLookup[daily.weathercode[i]] || "?"}</p>
+          		<p>${daily.temperature_2m_max[i]}° / ${daily.temperature_2m_min[i]}°</p>
+        		</div>
+      		`;
+    	});
+
+    	fetchLocalTime(timezone);
+
+
 	} catch (error) {
 		//step 9
 		showErrorBanner("Network error. Please try again.");
 		console.error("Fetch failed:" , error);
 
 	}
+}
+
+function fetchLocalTime(timezone){
+	//step 13
+	if (!timezone) {
+		const localTime = new Date().toLocaleTimeString();
+		$(".current-weather").append(`<p>Local Time: ${localTime}</p>`);
+		return;
+	}
+
+	//step 11-15
+	$.getJSON(`https://worldtimeapi.org/api/timezone/${timezone}`)
+		//step 14
+		.done(function(data)) {
+			//step 12
+			const localTime = new Date(data.datetime).toLocaleTimeString();
+			$(".current-weather").append(`<p>Local Time: ${localTime}</p>`);
+		}
+		//step 13
+		.fail(function() {
+			//step 13
+			const fallbackTime = new Date().toLocaleTimeString();
+			$(".current-weather").append(`<p>Local Time: ${fallbackTime}</p>`);
+		})
+		//step 15
+		.always(function() {
+			//step 15
+			console.log("WorldTimeAPI request completed at:", new Date().toISOString());
+		});
 }
 
 searchBtn.addEventListener("click", () => {
