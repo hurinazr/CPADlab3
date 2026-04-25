@@ -34,12 +34,52 @@ function removeSkeletons(){
 	});
 }
 
+//step 16
+async function safeFetch(url, options = {}) {
+	const controller = new AbortController();
+	const timeoutId = setTimeout (() => controller.abort(), 10000); //step 19
+
+	try {
+		const response = await fetch(url, {...options, signal: controller.signal});
+		clearTimeout(timeoutId);
+
+		if (!response.ok) {
+			throw new Error(`HTTP Error: ${response.status}`);
+		}
+
+		return await response.json();
+	} catch(error) {
+		clearTimeout(timeoutId);
+		throw error;
+	}
+}
+
+//step 17
+function validateInput(city){
+	if (!city || city.length < 2) {
+		currentWeatherCard.innerHTML = `<p class ="error">Please enter at least 2 characters.</p>`;
+		return false;
+	}
+	return true;
+}
+
+//step 18
+function debounce(fn, delay) {
+	let timer;
+	return function (...args) {
+		clearTimeout(timer);
+		timer = setTimeout(() => fn.apply(this, args), delay);
+	};
+}
+
 async function fetchWeather(city) {
 	try {
+
+		if (!validateInput(city)) {return;}
+
 		//step 5
-		const geoRes = await
-		fetch(`https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(city)}&count=1`);
-		const geoData = await geoRes.json();
+		const geoData = await
+		safeFetch(`https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(city)}&count=1`);
 
 		//step 6
 		if (!geoData.results || geoData.results.length === 0) {
@@ -50,9 +90,8 @@ async function fetchWeather(city) {
 		const {latitude, longtitude, name, country} = geoData.results[0];
 
 		//step 7
-		const weatherRes = await 
-		fetch(`https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&current_weather=true&hourly=temperature_2m,relativehumidity_2m,windspeed_10m&daily=temperature_2m_max,temperature_2m_min,weathercode&timezone=auto`);
-		const weatherData = await weatherRes.json();
+		const weatherData = await 
+		safeFetch(`https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&current_weather=true&hourly=temperature_2m,relativehumidity_2m,windspeed_10m&daily=temperature_2m_max,temperature_2m_min,weathercode&timezone=auto`);
 
 		//step 8
 		removeSkeletons();
@@ -80,12 +119,14 @@ async function fetchWeather(city) {
 
     	fetchLocalTime(timezone);
 
-
 	} catch (error) {
 		//step 9
-		showErrorBanner("Network error. Please try again.");
-		console.error("Fetch failed:" , error);
-
+		if (error.name === "AbortError") {
+			showErrorBanner("Request timed out. Please try again.");
+		} else {
+			showErrorBanner(error.message || "Network error. Please try again.");
+		}
+		console.error("Fetch failed:", error);
 	}
 }
 
@@ -117,6 +158,16 @@ function fetchLocalTime(timezone){
 			console.log("WorldTimeAPI request completed at:", new Date().toISOString());
 		});
 }
+
+//step 18
+const debouncedSearch = debounce(() => {
+	const city = searchInput.value.trim();
+	if (city) {
+		fetchWeather(city);
+	}
+}, 500);
+
+searchInput.addEventListener("input", debouncedSearch);
 
 searchBtn.addEventListener("click", () => {
 	const city = searchInput.value.trim();
