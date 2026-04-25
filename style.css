@@ -1,9 +1,8 @@
-/* General Layout */
 body {
-  font-family: Arial, sans-serif;
+  font-family: 'Merriweather', serif;
   margin: 0;
   padding: 20px;
-  background: #f0f4f8;
+  background: #faf9f7;
   color: #333;
 }
 
@@ -16,25 +15,33 @@ body {
 .search-input {
   flex: 1;
   padding: 10px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
+  border: 1px solid #d8e3d0;
+  border-radius: 6px;
+  background: #f6fbf4;
 }
 
 .search-btn {
   padding: 10px 20px;
-  background: #4a90e2;
-  color: white;
+  background: #f7b5c0; 
+  color: #fff;
   border: none;
-  border-radius: 4px;
+  border-radius: 6px;
   cursor: pointer;
+  font-weight: 600;
+  transition: background 0.2s ease;
+}
+
+.search-btn:hover {
+  background: #e89aa8; 
 }
 
 .card {
-  background: white;
+  background: #ffffff;
   padding: 20px;
-  border-radius: 8px;
+  border-radius: 10px;
   margin-bottom: 20px;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+  box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+  border: 1px solid #e0e0e0;
 }
 
 .forecast-grid {
@@ -44,11 +51,24 @@ body {
 }
 
 .forecast-card {
-  background: white;
-  padding: 15px;
-  border-radius: 6px;
+  background: #fdfdfd;
+  border-radius: 10px;
+  padding: 12px;
   text-align: center;
-  box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+  box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+  border: 1px solid #f0d9de;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.forecast-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 3px 8px rgba(0,0,0,0.12);
+}
+
+.forecast-card p {
+  margin: 6px 0;
+  font-size: 14px;
+  color: #4a4a4a;
 }
 
 /* Skeleton Loader */
@@ -58,9 +78,53 @@ body {
 }
 
 .skeleton {
-  background: linear-gradient(90deg, #e0e0e0 25%, #f5f5f5 50%, #e0e0e0 75%);
+  background: linear-gradient(90deg, #d8e3d0 25%, #f6fbf4 50%, #d8e3d0 75%);
   background-size: 200% 100%;
   animation: shimmer 1.5s infinite;
-  border-radius: 4px;
+  border-radius: 6px;
+}
 
+.error {
+  color: #d9534f; 
+  font-weight: 600;
+  margin: 10px 0;
+}
+
+.error-banner {
+  background: #f7b5c0; 
+  color: #6b1f2b;      
+  border: 1px solid #f0d9de;
+  border-radius: 8px;
+  padding: 12px 20px;
+  margin-bottom: 15px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+}
+
+.error-banner p {
+  margin: 0;
+  font-size: 14px;
+}
+
+.error-banner button {
+  background: #6b1f2b; 
+  color: white;
+  border: none;
+  border-radius: 6px;
+  padding: 6px 12px;
+  cursor: pointer;
+  font-size: 13px;
+  transition: background 0.2s ease;
+}
+
+.error-banner button:hover {
+  background: #4a141d;
+}
+
+/* Local time display */
+.current-weather p:last-child {
+  font-style: italic;
+  color: #7aa874;
 }
