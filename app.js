@@ -87,7 +87,7 @@ async function fetchWeather(city) {
 			return;
 		}
 
-		const {latitude, longtitude, name, country} = geoData.results[0];
+		const {latitude, longitude, name, country, timezone} = geoData.results[0];
 
 		//step 7
 		const weatherData = await 
@@ -141,11 +141,11 @@ function fetchLocalTime(timezone){
 	//step 11-15
 	$.getJSON(`https://worldtimeapi.org/api/timezone/${timezone}`)
 		//step 14
-		.done(function(data)) {
+		.done(function(data) {
 			//step 12
 			const localTime = new Date(data.datetime).toLocaleTimeString();
 			$(".current-weather").append(`<p>Local Time: ${localTime}</p>`);
-		}
+		})
 		//step 13
 		.fail(function() {
 			//step 13
